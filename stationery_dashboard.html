@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แดชบอร์ดงบเครื่องเขียน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F7F6F2;
+  --surface:#FFFFFF;
+  --surface2:#F0EEE8;
+  --border:#E2DDD4;
+  --text:#2C2C2A;
+  --text2:#5F5E5A;
+  --text3:#888780;
+  --blue:#185FA5;
+  --blue-light:#E6F1FB;
+  --blue-mid:#B5D4F4;
+  --teal:#0F6E56;
+  --teal-light:#E1F5EE;
+  --teal-mid:#9FE1CB;
+  --amber:#BA7517;
+  --amber-light:#FAEEDA;
+  --red:#A32D2D;
+  --red-light:#FCEBEB;
+  --green:#3B6D11;
+  --green-light:#EAF3DE;
+  --radius:10px;
+  --radius-sm:6px;
+}
+body{font-family:'IBM Plex Sans Thai','Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+
+/* Sidebar */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:0;display:flex;flex-direction:column;}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-size:16px;font-weight:600;color:var(--text);letter-spacing:-0.3px;}
+.sidebar-logo span{color:var(--blue);}
+.sidebar-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.nav{padding:12px 8px;flex:1;}
+.nav-group{margin-bottom:8px;}
+.nav-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;padding:6px 12px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:500;}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:0.7;}
+.nav-item.active .nav-icon{opacity:1;}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border);}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px 12px;}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* Main */
+.main{padding:28px 32px;overflow-y:auto;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;}
+.page-title{font-size:20px;font-weight:600;color:var(--text);letter-spacing:-0.3px;}
+.page-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.btn{font-size:12px;font-weight:500;padding:7px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.btn:hover{background:var(--surface2);}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-primary:hover{background:#0C447C;}
+.btn-danger{background:var(--red-light);color:var(--red);border-color:#F7C1C1;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-icon{width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;}
+
+/* Year tabs */
+.year-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;margin-bottom:20px;width:fit-content;}
+.year-tab{padding:5px 16px;border-radius:4px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+.year-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+
+/* Summary cards */
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px;}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
+.sum-label{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:8px;}
+.sum-value{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
+.sum-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+.sum-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:10px;overflow:hidden;}
+.sum-bar-fill{height:100%;border-radius:2px;}
+.sum-card.blue .sum-value{color:var(--blue);}
+.sum-card.teal .sum-value{color:var(--teal);}
+.sum-card.amber .sum-value{color:var(--amber);}
+.sum-card.total .sum-value{color:var(--text);}
+
+/* Two column layout */
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:16px;}
+
+/* Table card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);}
+.card-title{font-size:13px;font-weight:600;color:var(--text);}
+.card-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:var(--surface2);padding:8px 14px;text-align:left;font-weight:500;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;}
+thead th:last-child{text-align:right;}
+tbody td{padding:9px 14px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#FAFAF8;}
+.td-num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;}
+.td-actions{text-align:right;white-space:nowrap;display:flex;gap:4px;justify-content:flex-end;}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;}
+.badge-blue{background:var(--blue-light);color:var(--blue);}
+.badge-teal{background:var(--teal-light);color:var(--teal);}
+.badge-amber{background:var(--amber-light);color:var(--amber);}
+.badge-gray{background:var(--surface2);color:var(--text2);}
+
+/* Monthly summary */
+.month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px;}
+.month-item{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;}
+.month-name{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.month-total{font-size:14px;font-weight:600;color:var(--text);}
+.month-breakdown{font-size:10px;color:var(--text3);margin-top:2px;}
+.month-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
+.month-bar-fill{height:100%;border-radius:2px;background:var(--blue);}
+
+/* Copier sub-table */
+.copier-section{padding:0 14px 10px;}
+.copier-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
+.copier-row:last-child{border-bottom:none;}
+.copier-name{color:var(--text2);}
+.copier-val{font-weight:500;color:var(--text);}
+
+/* Modal overlay */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border-radius:var(--radius);width:440px;max-width:90vw;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.12);transform:translateY(8px);transition:transform 0.2s;}
+.overlay.open .modal{transform:translateY(0);}
+.modal-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:5px;display:block;}
+.form-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color 0.15s;}
+.form-input:focus{border-color:var(--blue);}
+select.form-input{cursor:pointer;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-size:12px;z-index:200;opacity:0;transform:translateY(8px);transition:all 0.25s;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* Mini chart bar */
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:40px;padding:0 18px 14px;}
+.mini-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.mini-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height 0.3s;}
+.mini-label{font-size:9px;color:var(--text3);}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo" id="sidebar-logo-el">งบ<span>เครื่องเขียน</span></div>
+    <div class="sidebar-sub">ระบบติดตามค่าใช้จ่าย</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-label">ภาพรวม</div>
+      <div class="nav-item active" onclick="setPage('dashboard')">
+        <svg class="nav-icon" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity=".7"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity=".7"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity=".4"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1.2" fill="currentColor" opacity=".4"/></svg>
+        แดชบอร์ด
+      </div>
+      <div class="nav-item" onclick="setPage('stationery')">
+        <svg class="nav-icon" viewBox="0 0 15 15" fill="none"><path d="M3 2h9a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/><path d="M5 5h5M5 7.5h5M5 10h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        ค่าใช้จ่ายใน OFM (Officemate)
+      </div>
+      <div class="nav-item" onclick="setPage('copier')">
+        <svg class="nav-icon" viewBox="0 0 15 15" fill="none"><rect x="2" y="4" width="11" height="8" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M5 4V2.5a.5.5 0 01.5-.5h4a.5.5 0 01.5.5V4" stroke="currentColor" stroke-width="1.2"/><rect x="4.5" y="6.5" width="6" height="3" rx=".6" fill="currentColor" opacity=".3"/></svg>
+        ค่าถ่ายเอกสาร
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">รายงาน</div>
+      <div class="nav-item" onclick="setPage('monthly')">
+        <svg class="nav-icon" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2" width="12" height="11" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M5 2V1M10 2V1M1.5 5.5h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        ยอดสะสมรายเดือน
+      </div>
+      <div class="nav-item" onclick="setPage('dept')">
+        <svg class="nav-icon" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M2 13c0-3 2.5-4.5 5.5-4.5S13 10 13 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M14.5 11.5c0-1.8-1.2-3-2.5-3.2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        การเบิกตามหน่วยงาน
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">AD</div>
+      <div>
+        <div style="font-size:12px;font-weight:500;">ผู้ดูแลระบบ</div>
+        <div style="font-size:10px;color:var(--text3);">Admin</div>
+      </div>
+    </div>
+    <div style="padding:8px 12px 4px;display:flex;gap:6px;">
+      <button class="btn btn-primary" style="flex:1;font-size:11px;padding:6px 8px;" onclick="saveJSON()">
+        <span style="margin-right:4px;">💾</span>บันทึกข้อมูล
+      </button>
+      <label class="btn" style="flex:1;font-size:11px;padding:6px 8px;cursor:pointer;text-align:center;margin:0;">
+        <span style="margin-right:4px;">📂</span>โหลดข้อมูล
+        <input type="file" accept=".json" style="display:none;" onchange="loadJSON(event)">
+      </label>
+    </div>
+    <div style="padding:4px 12px 4px;">
+      <button class="btn" style="width:100%;font-size:11px;padding:6px 8px;color:var(--teal);border-color:var(--teal-mid);" onclick="exportExcel()">
+        <span style="margin-right:4px;">📊</span>Export Excel
+      </button>
+    </div>
+    <div style="padding:2px 12px 8px;font-size:10px;color:var(--text3);text-align:center;">
+      บันทึก JSON เพื่อโหลดข้อมูลกลับ · Excel สำหรับรายงาน
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main" id="main-content">
+</main>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">เพิ่มรายการ</div>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveRecord()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let CFG = {
+  dashTitle:   '📊 Dashboard : ค่าเครื่องเขียนแบบพิมพ์',
+  budgetYear:  '2569',
+  budgetName:  'ค่าเครื่องเขียนแบบพิมพ์',
+  budgetAmt:   265000,
+};
+Object.defineProperty(window,'BUDGET_STAT',{get:()=>CFG.budgetAmt});
+const MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const MONTHS_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const COPIERS = ['หมายเลข 9135R810748 (อาคารสำนักงาน)','หมายเลข 9135R810593 (ห้องควบคุม 21)','หมายเลข 9135R810606 (อาคารปฏิบัติการ)'];
+const PRICE_COLOR = 2;    // บาทต่อแผ่น Copy สี
+const PRICE_BW    = 0.2;  // บาทต่อแผ่น Copy ขาวดำ
+function calcCopierAmt(colorP, bwP){ return (Number(colorP)*PRICE_COLOR) + (Number(bwP)*PRICE_BW); }
+
+
+let currentPage = 'dashboard';
+let editingId = null;
+let editingType = null;
+let deleteCallback = null;
+
+// Sample data
+let statData = [
+  {id:1,month:1,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:2,month:1,year:2026,item:'ปากกา ลูกลื่น (12 ด้าม)',amount:480,note:''},
+  {id:3,month:2,year:2026,item:'แฟ้มเอกสาร (10 เล่ม)',amount:390,note:''},
+  {id:4,month:2,year:2026,item:'กระดาษ A4 (3 รีม)',amount:750,note:''},
+  {id:5,month:3,year:2026,item:'ดินสอ + ยางลบ',amount:210,note:''},
+  {id:6,month:3,year:2026,item:'แบบฟอร์มใบเสนอราคา',amount:650,note:''},
+  {id:7,month:4,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:8,month:4,year:2026,item:'คลิปหนีบกระดาษ + ลวดเย็บ',amount:180,note:''},
+  {id:9,month:5,year:2026,item:'ปากกาไฮไลท์ (6 สี)',amount:320,note:''},
+  {id:10,month:5,year:2026,item:'แบบพิมพ์ใบเสร็จ',amount:800,note:''},
+  {id:11,month:6,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:12,month:6,year:2026,item:'โฟลเดอร์แขวน',amount:420,note:''},
+  {id:13,month:7,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:14,month:7,year:2026,item:'สมุดบันทึก (10 เล่ม)',amount:350,note:''},
+  {id:15,month:8,year:2026,item:'แบบพิมพ์ใบสั่งซื้อ',amount:720,note:''},
+  {id:16,month:8,year:2026,item:'ปากกาลูกลื่น (12 ด้าม)',amount:480,note:''},
+  {id:17,month:9,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:18,month:9,year:2026,item:'เทปกาว + กรรไกร',amount:160,note:''},
+  {id:19,month:10,year:2026,item:'แฟ้มเจาะรู (10 เล่ม)',amount:420,note:''},
+  {id:20,month:10,year:2026,item:'กระดาษ A4 (3 รีม)',amount:750,note:''},
+  {id:21,month:11,year:2026,item:'ปากกาไฮไลท์ + ดินสอ',amount:290,note:''},
+  {id:22,month:11,year:2026,item:'แบบฟอร์มใบเสร็จรับเงิน',amount:680,note:''},
+  {id:23,month:12,year:2026,item:'กระดาษ A4 (5 รีม)',amount:1250,note:''},
+  {id:24,month:12,year:2026,item:'เครื่องเขียนชุดปีใหม่',amount:950,note:'ของขวัญปีใหม่แผนก'},
+];
+
+let copierData = [
+  {id:1,month:1,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1240,amount:620,note:''},
+  {id:2,month:1,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:980,amount:490,note:''},
+  {id:3,month:1,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:560,amount:280,note:''},
+  {id:4,month:2,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1100,amount:550,note:''},
+  {id:5,month:2,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:870,amount:435,note:''},
+  {id:6,month:2,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:430,amount:215,note:''},
+  {id:7,month:3,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1380,amount:690,note:''},
+  {id:8,month:3,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:920,amount:460,note:''},
+  {id:9,month:3,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:610,amount:305,note:''},
+  {id:10,month:4,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1050,amount:525,note:''},
+  {id:11,month:4,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:1100,amount:550,note:''},
+  {id:12,month:4,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:490,amount:245,note:''},
+  {id:13,month:5,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1290,amount:645,note:''},
+  {id:14,month:5,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:840,amount:420,note:''},
+  {id:15,month:5,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:670,amount:335,note:''},
+  {id:16,month:6,year:2026,copier:'หมายเลข 9135R810748 (อาคารสำนักงาน)',pages:1150,amount:575,note:''},
+  {id:17,month:6,year:2026,copier:'หมายเลข 9135R810593 (ห้องควบคุม 21)',pages:960,amount:480,note:''},
+  {id:18,month:6,year:2026,copier:'หมายเลข 9135R810606 (อาคารปฏิบัติการ)',pages:500,amount:250,note:''},
+];
+
+let nextStatId = 25;
+let nextCopierID = 37;
+
+function fmt(n){return Number(n).toLocaleString('th-TH');}
+function getMonthlyStatTotal(m,y){return statData.filter(d=>d.month===m&&d.year===y).reduce((s,d)=>s+Number(d.amount),0);}
+function getMonthlyCopierTotal(m,y){return copierData.filter(d=>d.month===m&&d.year===y).reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?calcCopierAmt(d.colorPages||0,d.bwPages||0):Number(d.amount||0)),0);}
+function totalStat(){return statData.reduce((s,d)=>s+Number(d.amount),0);}
+function totalCopier(){return copierData.reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?calcCopierAmt(d.colorPages||0,d.bwPages||0):Number(d.amount||0)),0);}
+
+function setPage(p){
+  currentPage=p;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const pages=['dashboard','stationery','copier','monthly','dept'];
+  const idx=pages.indexOf(p);
+  document.querySelectorAll('.nav-item')[idx].classList.add('active');
+  render();
+}
+
+function render(){
+  const el=document.getElementById('main-content');
+  if(currentPage==='dashboard'){ el.innerHTML=renderDashboard(); initMonthlyChart(); }
+  else if(currentPage==='stationery') el.innerHTML=renderStationery();
+  else if(currentPage==='copier') el.innerHTML=renderCopier();
+  else if(currentPage==='monthly') el.innerHTML=renderMonthly();
+  else if(currentPage==='dept') el.innerHTML=renderDept();
+}
+
+function renderDashboard(){
+  const ts=totalStat(), tc=totalCopier(), tt=ts+tc;
+  const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+  const maxM=Math.max(...months.map(m=>getMonthlyStatTotal(m,2026)+getMonthlyCopierTotal(m,2026)),1);
+
+  // mini bars
+  const bars=months.map(m=>{
+    const sv=getMonthlyStatTotal(m,2026);
+    const cv=getMonthlyCopierTotal(m,2026);
+    const sh=Math.round((sv/maxM)*36);
+    const ch=Math.round((cv/maxM)*36);
+    return '<div class="mini-bar-wrap">'
+      +'<div style="display:flex;flex-direction:column;align-items:center;gap:1px;height:38px;justify-content:flex-end;">'
+      +'<div class="mini-bar" style="height:'+sh+'px;background:#185FA5;width:8px;border-radius:2px 2px 0 0;"></div>'
+      +'<div class="mini-bar" style="height:'+ch+'px;background:#0F6E56;width:8px;border-radius:2px 2px 0 0;margin-top:1px;"></div>'
+      +'</div><div class="mini-label">'+MONTHS[m-1]+'</div></div>';
+  }).join('');
+
+  // Copier totals
+  const c1=copierData.filter(d=>d.copier==='หมายเลข 9135R810748 (อาคารสำนักงาน)').reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?calcCopierAmt(d.colorPages||0,d.bwPages||0):Number(d.amount||0)),0);
+  const c2=copierData.filter(d=>d.copier==='หมายเลข 9135R810593 (ห้องควบคุม 21)').reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?calcCopierAmt(d.colorPages||0,d.bwPages||0):Number(d.amount||0)),0);
+  const c3=copierData.filter(d=>d.copier==='หมายเลข 9135R810606 (อาคารปฏิบัติการ)').reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?calcCopierAmt(d.colorPages||0,d.bwPages||0):Number(d.amount||0)),0);
+
+  // Monthly table rows
+  const monthRows=months.map(m=>{
+    const sv=getMonthlyStatTotal(m,2026);
+    const cv=getMonthlyCopierTotal(m,2026);
+    return '<tr>'
+      +'<td>'+MONTHS_FULL[m-1]+'</td>'
+      +'<td class="td-num" style="color:var(--blue)">฿'+fmt(sv)+'</td>'
+      +'<td class="td-num" style="color:var(--teal)">฿'+fmt(cv)+'</td>'
+      +'<td class="td-num" style="font-weight:600">฿'+fmt(sv+cv)+'</td>'
+      +'</tr>';
+  }).join('');
+
+  // Copier machine cards
+  const copierCards=['หมายเลข 9135R810748 (อาคารสำนักงาน)','หมายเลข 9135R810593 (ห้องควบคุม 21)','หมายเลข 9135R810606 (อาคารปฏิบัติการ)'].map((c,i)=>{
+    const v=[c1,c2,c3][i];
+    const pages=copierData.filter(d=>d.copier===c).reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?Number(d.colorPages||0)+Number(d.bwPages||0):Number(d.pages||0)),0);
+    const col=['var(--blue)','var(--teal)','var(--amber)'][i];
+    const pct=tc>0?Math.round(v/tc*100):0;
+    return '<div class="copier-row" style="padding:10px 18px;">'
+      +'<div><div style="font-weight:500;font-size:12px;line-height:1.5;">'+c.replace(' (','<br>(')+'</div>'
+      +'<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+fmt(pages)+' แผ่น</div></div>'
+      +'<div style="text-align:right">'
+      +'<div style="font-size:14px;font-weight:600;color:'+col+'">฿'+fmt(v)+'</div>'
+      +'<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+pct+'% ของทั้งหมด</div>'
+      +'</div></div>'
+      +'<div style="padding:0 18px 2px;"><div class="sum-bar"><div class="sum-bar-fill" style="width:'+pct+'%;background:'+col+';"></div></div></div>';
+  }).join('');
+
+  // Dept cross-tab
+  const deptHeaderCells=months.map(m=>'<th style="text-align:right;font-size:10px;">'+MONTHS[m-1]+'</th>').join('');
+  const deptBodyRows=DEPTS.map((dep,i)=>{
+    const col=DEPT_COLORS[i];
+    const cells=months.map(m=>{
+      const v=deptData.filter(d=>d.dept===dep&&d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+      return '<td class="td-num" style="font-size:10px;">'+(v>0?'฿'+fmt(v):'—')+'</td>';
+    }).join('');
+    const total=deptData.filter(d=>d.dept===dep&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+    if(total===0)return '';
+    return '<tr><td style="font-size:11px;font-weight:500;color:'+col+';white-space:nowrap;border-left:3px solid '+col+';padding-left:11px;">'+dep+'</td>'+cells+'<td class="td-num" style="font-weight:600;color:'+col+';">฿'+fmt(total)+'</td></tr>';
+  }).filter(Boolean).join('');
+  const deptFootCells=months.map(m=>{
+    const v=deptData.filter(d=>d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+    return '<td class="td-num" style="font-size:10px;font-weight:600;">'+(v>0?'฿'+fmt(v):'—')+'</td>';
+  }).join('');
+  const deptGrand=deptData.filter(d=>d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+
+  const html=
+    '<div class="page-header">'
+      +'<div>'
+        +'<div class="page-title" id="cfg-dashTitle" title="ดับเบิลคลิกเพื่อแก้ไข" ondblclick="editCfg(this,\'dashTitle\')" style="cursor:text;">'+CFG.dashTitle+'</div>'
+        +'<div class="page-sub" id="cfg-budgetYear" title="ดับเบิลคลิกเพื่อแก้ไข" ondblclick="editCfg(this,\'budgetYear\')" style="cursor:text;">ปีงบประมาณ '+CFG.budgetYear+' (ม.ค. – ธ.ค. '+CFG.budgetYear+')</div>'
+      +'</div>'
+      +'<div class="header-actions"><select class="btn" style="cursor:pointer;"><option>2569</option></select></div>'
+    +'</div>'
+
+    // Budget card — งบรวม 265,000 ใช้ร่วมกัน (เครื่องเขียน + ถ่ายเอกสาร)
+    +(function(){
+      const budget  = BUDGET_STAT;   // 265,000
+      const used    = tt;            // รวมทั้งสองรายการ
+      const remain  = budget - used;
+      const over    = used > budget;
+      const pct     = Math.min(Math.round(used/budget*100),100);
+      const barCol  = over?'var(--red)':pct>=80?'var(--amber)':'var(--blue)';
+      const remCol  = over?'var(--red)':'var(--green)';
+      const remBg   = over?'var(--red-light)':'var(--green-light)';
+
+      return '<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:24px;">'
+
+        // การ์ดหลัก — งบ + ใช้ + เหลือ
+        +'<div class="sum-card" style="border-top:3px solid var(--blue);">'
+          +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">'
+            +'<div>'
+              +'<div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">งบประมาณ</div>'
+              +'<div style="font-size:14px;font-weight:600;color:var(--text);margin-top:2px;cursor:text;" title="ดับเบิลคลิกเพื่อแก้ไข" ondblclick="editCfg(this,\'budgetName\')" id="cfg-budgetName">'+CFG.budgetName+'</div>'
+            +'</div>'
+            +'<div style="text-align:right;">'
+              +'<div style="font-size:10px;color:var(--text3);">งบรวม</div>'
+              +'<div style="font-size:22px;font-weight:700;color:var(--text);cursor:text;" title="ดับเบิลคลิกเพื่อแก้ไข" ondblclick="editBudgetAmt(this)" id="cfg-budgetAmt">฿'+fmt(budget)+'</div>'
+            +'</div>'
+          +'</div>'
+
+          // ใช้ไปแล้ว | คงเหลือ side-by-side
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'
+            +'<div style="background:var(--blue-light);border-radius:8px;padding:10px 14px;">'
+              +'<div style="font-size:10px;color:var(--blue);margin-bottom:4px;font-weight:500;">ใช้ไปแล้ว</div>'
+              +'<div style="font-size:20px;font-weight:700;color:var(--blue);">฿'+fmt(used)+'</div>'
+              +'<div style="font-size:10px;color:var(--blue);margin-top:4px;opacity:.8;">'
+                +'ค่าใช้จ่าย OFM ฿'+fmt(ts)+' · ถ่ายเอกสาร ฿'+fmt(tc)
+              +'</div>'
+            +'</div>'
+            +'<div style="background:'+remBg+';border-radius:8px;padding:10px 14px;">'
+              +'<div style="font-size:10px;color:'+remCol+';margin-bottom:4px;font-weight:500;">'+(over?'เกินงบ':'คงเหลือ')+'</div>'
+              +'<div style="font-size:20px;font-weight:700;color:'+remCol+';">฿'+fmt(Math.abs(remain))+'</div>'
+              +'<div style="font-size:10px;color:'+remCol+';margin-top:4px;opacity:.8;">'+(over?'เกิน':'เหลือ')+' '+pct+'% ของงบ</div>'
+            +'</div>'
+          +'</div>'
+
+          // Progress bar
+          +'<div style="background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;">'
+            +'<div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:4px;transition:width .4s;"></div>'
+          +'</div>'
+          +'<div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--text3);">'
+            +'<span>ใช้ไป '+pct+'%</span>'
+            +'<span>฿'+fmt(budget)+'</span>'
+          +'</div>'
+        +'</div>'
+
+        // การ์ดขวา: เฉลี่ย + สัดส่วน
+        +'<div style="display:flex;flex-direction:column;gap:10px;">'
+          +'<div class="sum-card" style="flex:1;">'
+            +'<div class="sum-label">ค่าใช้จ่ายใน OFM (Officemate)</div>'
+            +'<div class="sum-value" style="font-size:18px;">฿'+fmt(ts)+'</div>'
+            +'<div class="sum-sub">'+Math.round(ts/budget*100)+'% ของงบ</div>'
+            +'<div class="sum-bar" style="margin-top:8px;"><div class="sum-bar-fill" style="width:'+Math.min(Math.round(ts/budget*100),100)+'%;background:var(--blue);"></div></div>'
+          +'</div>'
+          +'<div class="sum-card" style="flex:1;">'
+            +'<div class="sum-label">ค่าถ่ายเอกสาร</div>'
+            +'<div class="sum-value" style="font-size:18px;">฿'+fmt(tc)+'</div>'
+            +'<div class="sum-sub">'+Math.round(tc/budget*100)+'% ของงบ</div>'
+            +'<div class="sum-bar" style="margin-top:8px;"><div class="sum-bar-fill" style="width:'+Math.min(Math.round(tc/budget*100),100)+'%;background:var(--teal);"></div></div>'
+          +'</div>'
+        +'</div>'
+
+      +'</div>';
+    })()
+
+    // Two-col: monthly table + copier
+    +'<div class="two-col">'
+      +'<div class="card">'
+        +'<div class="card-header">'
+          +'<div>'
+            +'<div class="card-title">ค่าใช้จ่ายรายเดือน ปี 2569 (ม.ค. – ธ.ค.)</div>'
+            +'<div class="card-sub" style="font-size:10px;margin-top:4px;">'
+              +'<span style="display:inline-block;width:10px;height:10px;background:#185FA5;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>ค่าใช้จ่ายใน OFM (Officemate)'
+              +'<span style="display:inline-block;width:10px;height:10px;background:#0F6E56;border-radius:2px;margin:0 4px 0 12px;vertical-align:middle;"></span>ถ่ายเอกสาร'
+            +'</div>'
+          +'</div>'
+          +'<div style="font-size:11px;color:var(--text3);">รวม ฿'+fmt(tt)+'</div>'
+        +'</div>'
+        +'<div style="padding:16px 18px 18px;position:relative;height:260px;">'
+          +'<canvas id="monthlyChart"></canvas>'
+        +'</div>'
+      +'</div>'
+      +'<div class="card">'
+        +'<div class="card-header"><div class="card-title">ค่าถ่ายเอกสารแยกเครื่อง</div></div>'
+        +copierCards
+        +'<div style="padding:14px 18px 10px;border-top:0.5px solid var(--border);margin-top:4px;">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px;">'
+            +'<span style="color:var(--text2)">รวม 3 เครื่อง</span>'
+            +'<span style="font-weight:600">฿'+fmt(tc)+'</span>'
+          +'</div>'
+          +'<div style="font-size:10px;color:var(--text3);margin-top:2px;">'
+            +fmt(copierData.reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?Number(d.colorPages||0)+Number(d.bwPages||0):Number(d.pages||0)),0))+' แผ่น ทั้งหมด'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+
+    // Dept cross-tab
+    +'<div class="card" style="margin-top:16px;">'
+      +'<div class="card-header">'
+        +'<div class="card-title">การเบิกเครื่องเขียนตามหน่วยงาน ปี 2569</div>'
+        +'<button class="btn btn-sm" style="font-size:11px;" onclick="setPage(\'dept\')">ดูทั้งหมด ↗</button>'
+      +'</div>'
+      +'<div class="table-wrap">'
+        +'<table>'
+          +'<thead><tr><th>หน่วยงาน</th>'+deptHeaderCells+'<th style="text-align:right;">รวม</th></tr></thead>'
+          +'<tbody>'+deptBodyRows+'</tbody>'
+          +'<tfoot><tr style="background:var(--surface2);">'
+            +'<td style="font-weight:600;font-size:11px;">รวมทุกหน่วยงาน</td>'
+            +deptFootCells
+            +'<td class="td-num" style="font-weight:700;">฿'+fmt(deptGrand)+'</td>'
+          +'</tr></tfoot>'
+        +'</table>'
+      +'</div>'
+    +'</div>';
+
+  return html;
+}
+
+function renderStationery(){
+  // Group by month only
+  const grouped={};
+  statData.forEach(d=>{
+    const k=`${d.year}-${d.month}`;
+    if(!grouped[k])grouped[k]={month:d.month,year:d.year,total:0,ids:[]};
+    grouped[k].total+=Number(d.amount);
+    grouped[k].ids.push(d.id);
+  });
+  const keys=Object.keys(grouped).sort((a,b)=>{
+    const [ay,am]=a.split('-').map(Number);
+    const [by,bm]=b.split('-').map(Number);
+    return ay!==by?ay-by:am-bm;
+  });
+  // Running cumulative
+  let running=0;
+  const rows=keys.map(k=>{
+    const g=grouped[k];
+    running+=g.total;
+    return `<tr>
+      <td style="font-weight:500;">${MONTHS_FULL[g.month-1]} ${g.year+543}</td>
+      <td class="td-num" style="color:var(--blue);font-weight:600;">฿${fmt(g.total)}</td>
+      <td class="td-num" style="color:var(--text2);">฿${fmt(running)}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-sm" onclick="openEditStatMonth(${g.month},${g.year})">แก้ไข</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteStatMonth(${g.month},${g.year})">ลบ</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="page-header">
+    <div>
+      <div class="page-title">ค่าใช้จ่ายใน OFM (Officemate)</div>
+      <div class="page-sub">ยอดสะสมทั้งปี ฿${fmt(totalStat())}</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddStat()">+ เพิ่มรายการ</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>เดือน</th>
+        <th style="text-align:right;">ยอดเบิกเดือนนี้</th>
+        <th style="text-align:right;">ยอดสะสม</th>
+        <th style="text-align:right;">จัดการ</th>
+      </tr></thead>
+      <tbody>${rows||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">ยังไม่มีข้อมูล</td></tr>'}</tbody>
+      <tfoot>
+        <tr style="background:var(--blue-light)">
+          <td style="font-weight:600;color:var(--blue);">ยอดสะสมทั้งหมด</td>
+          <td></td>
+          <td class="td-num" style="font-weight:700;color:var(--blue);">฿${fmt(totalStat())}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+
+function openEditStatMonth(month,year){
+  editingId='stat-month'; editingType='stat-month';
+  window._editStatMonth=month; window._editStatYear=year;
+  const cur=statData.filter(d=>d.month===month&&d.year===year).reduce((s,d)=>s+Number(d.amount),0);
+  document.getElementById('modal-title').textContent='แก้ไขยอด — '+MONTHS_FULL[month-1]+' '+(year+543);
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-group">
+      <label class="form-label">เดือน</label>
+      <input class="form-input" value="${MONTHS_FULL[month-1]} ${year+543}" disabled style="background:var(--surface2);">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ยอดเบิกรวม (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="${cur}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" placeholder="(ไม่บังคับ)">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function deleteStatMonth(month,year){
+  if(!confirm('ต้องการลบข้อมูลเดือน '+MONTHS_FULL[month-1]+'?'))return;
+  statData=statData.filter(d=>!(d.month===month&&d.year===year));
+  render(); showToast('ลบรายการเรียบร้อย');
+}
+
+function renderCopier(){
+  const grouped={};
+  copierData.forEach(d=>{
+    const k=`${d.year}-${d.month}`;
+    if(!grouped[k])grouped[k]={month:d.month,year:d.year,items:[]};
+    grouped[k].items.push(d);
+  });
+  const keys=Object.keys(grouped).sort((a,b)=>{
+    const [ay,am]=a.split('-').map(Number);
+    const [by,bm]=b.split('-').map(Number);
+    return ay!==by?ay-by:am-bm;
+  });
+  const colorMap={'หมายเลข 9135R810748 (อาคารสำนักงาน)':'badge-blue','หมายเลข 9135R810593 (ห้องควบคุม 21)':'badge-teal','หมายเลข 9135R810606 (อาคารปฏิบัติการ)':'badge-amber'};
+  const totalColor=copierData.reduce((s,d)=>s+Number(d.colorPages||0),0);
+  const totalBW=copierData.reduce((s,d)=>s+Number(d.bwPages||0),0);
+  const totalPages=copierData.reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?Number(d.colorPages||0)+Number(d.bwPages||0):Number(d.pages||0)),0);
+
+  return `
+  <div class="page-header">
+    <div>
+      <div class="page-title">ค่าถ่ายเอกสาร</div>
+      <div class="page-sub">3 เครื่อง · ยอดสะสม ฿${fmt(totalCopier())} · สี ${fmt(totalColor)} แผ่น · ขาวดำ ${fmt(totalBW)} แผ่น · รวม ${fmt(totalPages)} แผ่น</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="font-size:11px;color:var(--text3);background:var(--surface2);padding:5px 10px;border-radius:var(--radius-sm);">
+        สี <b style="color:var(--amber)">฿${PRICE_COLOR}/แผ่น</b> &nbsp;|&nbsp; ขาวดำ <b style="color:var(--text2)">฿${PRICE_BW}/แผ่น</b>
+      </div>
+      <button class="btn btn-primary" onclick="openAddCopier()">+ เพิ่มรายการ</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>เดือน/ปี</th>
+        <th>เครื่อง</th>
+        <th style="text-align:right">Copy สี (แผ่น)</th>
+        <th style="text-align:right">เงิน (สี)</th>
+        <th style="text-align:right">Copy ขาวดำ (แผ่น)</th>
+        <th style="text-align:right">เงิน (ขาวดำ)</th>
+        <th style="text-align:right">รวม</th>
+        <th>หมายเหตุ</th>
+        <th style="text-align:right">จัดการ</th>
+      </tr></thead>
+      <tbody>
+      ${keys.map(k=>{
+        const g=grouped[k];
+        const sub=g.items.map(d=>{
+          const isLegacy = d.colorPages==null && d.bwPages==null;
+          const colorAmt=Number(d.colorPages||0)*PRICE_COLOR;
+          const bwAmt=Number(d.bwPages||0)*PRICE_BW;
+          const total=isLegacy?Number(d.amount||0):(colorAmt+bwAmt);
+          const pagesTotal=isLegacy?Number(d.pages||0):(Number(d.colorPages||0)+Number(d.bwPages||0));
+          return `
+          <tr>
+            <td></td>
+            <td><span class="badge ${colorMap[d.copier]||'badge-gray'}" style="font-size:10px;white-space:normal;line-height:1.5;display:inline-block;">${d.copier.replace(' (','<br>(')}</span></td>
+            <td class="td-num" style="color:var(--amber);">${isLegacy?'—':fmt(d.colorPages||0)}</td>
+            <td class="td-num" style="color:var(--amber);">${isLegacy?'—':'฿'+fmt(colorAmt.toFixed(2))}</td>
+            <td class="td-num">${isLegacy?fmt(pagesTotal):fmt(d.bwPages||0)}</td>
+            <td class="td-num">${isLegacy?'—':'฿'+fmt(bwAmt.toFixed(2))}</td>
+            <td class="td-num" style="font-weight:600;color:var(--teal);">฿${fmt(total.toFixed(2))}</td>
+            <td style="color:var(--text3);font-size:11px;">${d.note||'—'}</td>
+            <td><div class="td-actions">
+              <button class="btn btn-sm" onclick="openEditCopier(${d.id})">แก้ไข</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteCopier(${d.id})">ลบ</button>
+            </div></td>
+          </tr>`;
+        }).join('');
+        const hasLegacy=g.items.some(d=>d.colorPages==null&&d.bwPages==null);
+        const mColor=g.items.reduce((s,d)=>s+Number(d.colorPages||0),0);
+        const mBW=g.items.reduce((s,d)=>s+Number(d.bwPages||0),0);
+        const mColorAmt=mColor*PRICE_COLOR;
+        const mBWAmt=mBW*PRICE_BW;
+        const mt=g.items.reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?Number(d.colorPages||0)*PRICE_COLOR+Number(d.bwPages||0)*PRICE_BW:Number(d.amount||0)),0);
+        const mPages=g.items.reduce((s,d)=>s+(d.colorPages!=null||d.bwPages!=null?Number(d.colorPages||0)+Number(d.bwPages||0):Number(d.pages||0)),0);
+        return `
+          <tr style="background:var(--surface2)">
+            <td colspan="2" style="font-weight:600;font-size:12px;">${MONTHS_FULL[g.month-1]} ${g.year+543}</td>
+            <td class="td-num" style="font-weight:600;color:var(--amber);">${hasLegacy?'—':fmt(mColor)}</td>
+            <td class="td-num" style="font-weight:600;color:var(--amber);">${hasLegacy?'—':'฿'+fmt(mColorAmt.toFixed(2))}</td>
+            <td class="td-num" style="font-weight:600;">${hasLegacy?fmt(mPages):fmt(mBW)}</td>
+            <td class="td-num" style="font-weight:600;">${hasLegacy?'—':'฿'+fmt(mBWAmt.toFixed(2))}</td>
+            <td class="td-num" style="font-weight:700;color:var(--teal);">฿${fmt(mt.toFixed(2))}</td>
+            <td></td><td></td>
+          </tr>${sub}`;
+      }).join('')}
+      </tbody>
+      <tfoot>
+        <tr style="background:var(--teal-light)">
+          <td colspan="2" style="font-weight:600;color:var(--teal);">ยอดสะสมทั้งหมด</td>
+          <td class="td-num" style="font-weight:600;color:var(--amber);">${fmt(totalColor)}</td>
+          <td class="td-num" style="font-weight:600;color:var(--amber);">฿${fmt((totalColor*PRICE_COLOR).toFixed(2))}</td>
+          <td class="td-num" style="font-weight:600;">${fmt(totalBW)}</td>
+          <td class="td-num" style="font-weight:600;">฿${fmt((totalBW*PRICE_BW).toFixed(2))}</td>
+          <td class="td-num" style="font-weight:700;color:var(--teal);">฿${fmt(totalCopier())}</td>
+          <td style="font-size:10px;color:var(--text3);">รวม ${fmt(totalPages)} แผ่น</td><td></td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+
+function renderMonthly(){
+  const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+  const maxV=Math.max(...months.map(m=>getMonthlyStatTotal(m,2026)+getMonthlyCopierTotal(m,2026)),1);
+
+  return `
+  <div class="page-header">
+    <div>
+      <div class="page-title">ยอดสะสมรายเดือน</div>
+      <div class="page-sub">เปรียบเทียบค่าใช้จ่ายใน OFM (Officemate) และค่าถ่ายเอกสารแต่ละเดือน</div>
+    </div>
+  </div>
+  <div class="summary-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+    <div class="sum-card total">
+      <div class="sum-label">ยอดสะสมรวม (2 รายการ)</div>
+      <div class="sum-value">฿${fmt(totalStat()+totalCopier())}</div>
+    </div>
+    <div class="sum-card blue">
+      <div class="sum-label">ค่าใช้จ่ายใน OFM (Officemate)</div>
+      <div class="sum-value">฿${fmt(totalStat())}</div>
+    </div>
+    <div class="sum-card teal">
+      <div class="sum-label">ถ่ายเอกสาร (3 เครื่อง)</div>
+      <div class="sum-value">฿${fmt(totalCopier())}</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">ยอดสะสมแยกรายเดือน ปี 2569</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px;">
+        <span style="display:inline-block;width:8px;height:8px;background:var(--blue);border-radius:1px;margin-right:4px;"></span>ค่าใช้จ่ายใน OFM (Officemate)
+        <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:1px;margin:0 4px 0 10px;"></span>ถ่ายเอกสาร
+      </div>
+    </div>
+    <div class="month-grid">
+      ${months.map(m=>{
+        const sv=getMonthlyStatTotal(m,2026);
+        const cv=getMonthlyCopierTotal(m,2026);
+        const tv=sv+cv;
+        const pct=Math.round(tv/maxV*100);
+        return `<div class="month-item">
+          <div class="month-name">${MONTHS_FULL[m-1]} 2569</div>
+          <div class="month-total">฿${fmt(tv)}</div>
+          <div class="month-breakdown">
+            <span style="color:var(--blue)">เครื่องเขียน ฿${fmt(sv)}</span>
+            &nbsp;·&nbsp;
+            <span style="color:var(--teal)">ถ่ายเอกสาร ฿${fmt(cv)}</span>
+          </div>
+          <div class="month-bar-wrap">
+            <div style="display:flex;height:3px;border-radius:2px;overflow:hidden;">
+              <div style="flex:${sv};background:var(--blue);"></div>
+              <div style="flex:${cv};background:var(--teal);"></div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="table-wrap" style="border-top:0.5px solid var(--border);">
+    <table>
+      <thead><tr>
+        <th>เดือน</th>
+        <th style="text-align:right">ค่าใช้จ่ายใน OFM (Officemate)</th>
+        <th style="text-align:right">ถ่ายเอกสาร</th>
+        <th style="text-align:right">รวม</th>
+        <th style="text-align:right">% ของทั้งหมด</th>
+      </tr></thead>
+      <tbody>
+        ${months.map(m=>{
+          const sv=getMonthlyStatTotal(m,2026);
+          const cv=getMonthlyCopierTotal(m,2026);
+          const tv=sv+cv;
+          const tt=totalStat()+totalCopier();
+          return `<tr>
+            <td>${MONTHS_FULL[m-1]}</td>
+            <td class="td-num" style="color:var(--blue)">฿${fmt(sv)}</td>
+            <td class="td-num" style="color:var(--teal)">฿${fmt(cv)}</td>
+            <td class="td-num" style="font-weight:600">฿${fmt(tv)}</td>
+            <td class="td-num">${(tv/tt*100).toFixed(1)}%</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+      <tfoot>
+        <tr style="background:var(--surface2)">
+          <td style="font-weight:600">รวม</td>
+          <td class="td-num" style="font-weight:600;color:var(--blue)">฿${fmt(totalStat())}</td>
+          <td class="td-num" style="font-weight:600;color:var(--teal)">฿${fmt(totalCopier())}</td>
+          <td class="td-num" style="font-weight:700">฿${fmt(totalStat()+totalCopier())}</td>
+          <td class="td-num" style="font-weight:600">100%</td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+
+// Modal functions
+function openAddStat(){
+  editingId=null; editingType='stat';
+  document.getElementById('modal-title').textContent='เพิ่มยอดค่าเครื่องเขียน';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="2569">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ยอดเบิกรวม (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" placeholder="(ไม่บังคับ)">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openEditStat(id){
+  const d=statData.find(x=>x.id===id);
+  editingId=id; editingType='stat';
+  document.getElementById('modal-title').textContent='แก้ไขรายการเครื่องเขียน';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}" ${d.month===i+1?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="${d.year+543}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายการ</label>
+      <input class="form-input" id="f-item" value="${d.item}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนเงิน (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="${d.amount}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" value="${d.note}">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openAddCopier(){
+  editingId=null; editingType='copier';
+  document.getElementById('modal-title').textContent='เพิ่มรายการถ่ายเอกสาร';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="2569">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เครื่องถ่ายเอกสาร</label>
+      <select class="form-input" id="f-copier">
+        ${COPIERS.map(c=>`<option value="${c}">${c}</option>`).join('')}
+      </select>
+    </div>
+    <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--text2);">
+      สี = ${PRICE_COLOR} บาท/แผ่น &nbsp;·&nbsp; ขาวดำ = ${PRICE_BW} บาท/แผ่น &nbsp;·&nbsp; <span style="color:var(--text3);">จำนวนเงินคำนวณอัตโนมัติ</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Copy สี (แผ่น)</label>
+        <input class="form-input" id="f-colorPages" type="number" placeholder="0" value="0" oninput="updateCopierAmt()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Copy ขาวดำ (แผ่น)</label>
+        <input class="form-input" id="f-bwPages" type="number" placeholder="0" value="0" oninput="updateCopierAmt()">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนเงินรวม (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="0" style="background:var(--surface2);font-weight:600;" readonly>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" placeholder="(ไม่บังคับ)">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openEditCopier(id){
+  const d=copierData.find(x=>x.id===id);
+  editingId=id; editingType='copier';
+  document.getElementById('modal-title').textContent='แก้ไขรายการถ่ายเอกสาร';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}" ${d.month===i+1?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="${d.year+543}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เครื่องถ่ายเอกสาร</label>
+      <select class="form-input" id="f-copier">
+        ${COPIERS.map(c=>`<option value="${c}" ${d.copier===c?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--text2);">
+      สี = ${PRICE_COLOR} บาท/แผ่น &nbsp;·&nbsp; ขาวดำ = ${PRICE_BW} บาท/แผ่น
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Copy สี (แผ่น)</label>
+        <input class="form-input" id="f-colorPages" type="number" value="${d.colorPages||0}" oninput="updateCopierAmt()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Copy ขาวดำ (แผ่น)</label>
+        <input class="form-input" id="f-bwPages" type="number" value="${d.bwPages||0}" oninput="updateCopierAmt()">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนเงินรวม (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="${d.amount}" style="background:var(--surface2);font-weight:600;" readonly>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" value="${d.note}">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function updateCopierAmt(){
+  const c=parseFloat(document.getElementById('f-colorPages')?.value)||0;
+  const b=parseFloat(document.getElementById('f-bwPages')?.value)||0;
+  const el=document.getElementById('f-amount');
+  if(el) el.value=(c*PRICE_COLOR+b*PRICE_BW).toFixed(2);
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveRecord(){
+  // อ่านค่าเฉพาะ field ที่มีอยู่จริงใน modal นั้น
+  const fMonth = document.getElementById('f-month');
+  const fYear  = document.getElementById('f-year');
+  const month  = fMonth ? parseInt(fMonth.value) : 0;
+  const year   = fYear  ? parseInt(fYear.value)-543 : 0;
+  const amount = parseFloat(document.getElementById('f-amount')?.value)||0;
+  const note   = document.getElementById('f-note')?.value||'';
+
+  if(editingType==='stat'){
+    statData.push({id:nextStatId++,month,year,item:'(ยอดรวม)',amount,note});
+  } else if(editingType==='stat-month'){
+    // แก้ไขยอดเดือนที่เลือก — ใช้ค่าจาก window._editStatMonth/Year
+    const m=window._editStatMonth; const y=window._editStatYear;
+    statData=statData.filter(d=>!(d.month===m&&d.year===y));
+    statData.push({id:nextStatId++,month:m,year:y,item:'(ยอดรวม)',amount,note});
+  } else if(editingType==='copier'){
+    const copier=document.getElementById('f-copier').value;
+    const colorPages=parseInt(document.getElementById('f-colorPages').value)||0;
+    const bwPages=parseInt(document.getElementById('f-bwPages').value)||0;
+    const calcAmt=calcCopierAmt(colorPages,bwPages);
+    if(editingId){
+      const d=copierData.find(x=>x.id===editingId);
+      d.month=month;d.year=year;d.copier=copier;d.colorPages=colorPages;d.bwPages=bwPages;d.pages=colorPages+bwPages;d.amount=calcAmt;d.note=note;
+    } else {
+      copierData.push({id:nextCopierID++,month,year,copier,colorPages,bwPages,pages:colorPages+bwPages,amount:calcAmt,note});
+    }
+  } else if(editingType==='dept'){
+    const dept=document.getElementById('f-dept').value;
+    const item=document.getElementById('f-item').value.trim();
+    const qty=parseInt(document.getElementById('f-qty').value)||1;
+    const unit=document.getElementById('f-unit').value||'ชิ้น';
+    if(!item){alert('กรุณากรอกรายการ');return;}
+    deptData.push({id:nextDeptId++,month,year,dept,item,qty,unit,amount,note});
+  } else if(editingType==='dept-month'){
+    const m=window._editMonth;
+    const dep=window._editDept;
+    const newAmt=parseFloat(document.getElementById('f-amount').value)||0;
+    const nt=document.getElementById('f-note').value||'';
+    // Remove all existing entries for this month+dept, add single summary entry
+    deptData=deptData.filter(d=>!(d.month===m&&d.dept===dep&&d.year===2026));
+    deptData.push({id:nextDeptId++,month:m,year:2026,dept:dep,item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:newAmt,note:nt});
+  }
+  closeModal();
+  render();
+  showToast(editingId?'อัปเดตเรียบร้อย':'เพิ่มรายการเรียบร้อย');
+}
+
+function deleteStat(id){
+  if(!confirm('ต้องการลบรายการนี้?'))return;
+  statData=statData.filter(d=>d.id!==id);
+  render();
+  showToast('ลบรายการเรียบร้อย');
+}
+
+function deleteCopier(id){
+  if(!confirm('ต้องการลบรายการนี้?'))return;
+  copierData=copierData.filter(d=>d.id!==id);
+  render();
+  showToast('ลบรายการเรียบร้อย');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+document.getElementById('modal-overlay').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+
+
+// ===== ข้อมูลการเบิกตามหน่วยงาน =====
+const DEPTS = [
+  'ธุรกิจไฟฟ้า (MR)',
+  'ฝ่ายบริหารเชื้อเพลิง FU (ส่งเสริม)',
+  'ฝ่ายบริหารเชื้อเพลิง FU (จัดหา)',
+  'ฝ่ายทรัพยากรบุคคล (HR)',
+  'แผนกวิศวกรรม (EN)',
+  'แผนกความปลอดภัยฯ (SE)',
+  'แผนกความปลอดภัยฯ (EV)',
+  'แผนกสำนักงานและบริหารคุณภาพ (ISO)',
+  'บัญชี (ACC)',
+  'ฝ่ายผลิต (OP)',
+  'ห้องแลป (OL)',
+  'ฝ่ายบำรุงรักษา (MNT)',
+  'แผนกบำรุงรักษาเครื่องกล (MM)',
+  'แผนกบำรุงรักษาเครื่องมือวัด (MI)',
+  'แผนกบำรุงรักษาไฟฟ้า (ME)',
+  'พัสดุ (MS)',
+  'ฝ่ายวิศวกรรมโครงการ (EN-CON)',
+  'แผนกสำนักงานและบริหารคุณภาพ (ADM)',
+];
+const DEPT_COLORS = [
+  '#185FA5','#0F6E56','#BA7517','#993556','#3B6D11',
+  '#534AB7','#854F0B','#185FA5','#0F6E56','#BA7517',
+  '#993556','#3B6D11','#534AB7','#854F0B','#185FA5',
+  '#0F6E56','#BA7517','#993556'
+];
+const DEPT_BG = [
+  '#E6F1FB','#E1F5EE','#FAEEDA','#FBEAF0','#EAF3DE',
+  '#EEEDFE','#FAEEDA','#E6F1FB','#E1F5EE','#FAEEDA',
+  '#FBEAF0','#EAF3DE','#EEEDFE','#FAEEDA','#E6F1FB',
+  '#E1F5EE','#FAEEDA','#FBEAF0'
+];
+
+let deptData = [
+  {id:1,month:1,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:850,note:''},
+  {id:2,month:1,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (ส่งเสริม)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:620,note:''},
+  {id:3,month:1,year:2026,dept:'ฝ่ายทรัพยากรบุคคล (HR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:430,note:''},
+  {id:4,month:1,year:2026,dept:'แผนกสำนักงานและบริหารคุณภาพ (ISO)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:380,note:''},
+  {id:5,month:1,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:750,note:''},
+  {id:6,month:1,year:2026,dept:'ฝ่ายผลิต (OP)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:920,note:''},
+  {id:7,month:2,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:470,note:''},
+  {id:8,month:2,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (จัดหา)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:540,note:''},
+  {id:9,month:2,year:2026,dept:'ฝ่ายทรัพยากรบุคคล (HR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:310,note:''},
+  {id:10,month:2,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:680,note:''},
+  {id:11,month:2,year:2026,dept:'พัสดุ (MS)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:420,note:''},
+  {id:12,month:3,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:900,note:''},
+  {id:13,month:3,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (ส่งเสริม)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:560,note:''},
+  {id:14,month:3,year:2026,dept:'แผนกวิศวกรรม (EN)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:480,note:''},
+  {id:15,month:3,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:720,note:''},
+  {id:16,month:3,year:2026,dept:'ฝ่ายบำรุงรักษา (MNT)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:350,note:''},
+  {id:17,month:4,year:2026,dept:'ฝ่ายทรัพยากรบุคคล (HR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:490,note:''},
+  {id:18,month:4,year:2026,dept:'แผนกความปลอดภัยฯ (SE)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:320,note:''},
+  {id:19,month:4,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:810,note:''},
+  {id:20,month:4,year:2026,dept:'ฝ่ายผลิต (OP)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:640,note:''},
+  {id:21,month:4,year:2026,dept:'พัสดุ (MS)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:370,note:''},
+  {id:22,month:5,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:530,note:''},
+  {id:23,month:5,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (จัดหา)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:460,note:''},
+  {id:24,month:5,year:2026,dept:'แผนกสำนักงานและบริหารคุณภาพ (ADM)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:580,note:''},
+  {id:25,month:5,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:750,note:''},
+  {id:26,month:6,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:870,note:''},
+  {id:27,month:6,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (ส่งเสริม)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:490,note:''},
+  {id:28,month:6,year:2026,dept:'ห้องแลป (OL)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:310,note:''},
+  {id:29,month:6,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:680,note:''},
+  {id:30,month:7,year:2026,dept:'ฝ่ายทรัพยากรบุคคล (HR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:520,note:''},
+  {id:31,month:7,year:2026,dept:'แผนกบำรุงรักษาเครื่องกล (MM)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:290,note:''},
+  {id:32,month:7,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:730,note:''},
+  {id:33,month:7,year:2026,dept:'ฝ่ายผลิต (OP)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:610,note:''},
+  {id:34,month:8,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:480,note:''},
+  {id:35,month:8,year:2026,dept:'แผนกความปลอดภัยฯ (EV)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:340,note:''},
+  {id:36,month:8,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:690,note:''},
+  {id:37,month:8,year:2026,dept:'พัสดุ (MS)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:450,note:''},
+  {id:38,month:9,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (จัดหา)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:570,note:''},
+  {id:39,month:9,year:2026,dept:'แผนกบำรุงรักษาเครื่องมือวัด (MI)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:280,note:''},
+  {id:40,month:9,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:760,note:''},
+  {id:41,month:9,year:2026,dept:'ฝ่ายวิศวกรรมโครงการ (EN-CON)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:620,note:''},
+  {id:42,month:10,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:950,note:''},
+  {id:43,month:10,year:2026,dept:'ฝ่ายทรัพยากรบุคคล (HR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:430,note:''},
+  {id:44,month:10,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:800,note:''},
+  {id:45,month:10,year:2026,dept:'แผนกบำรุงรักษาไฟฟ้า (ME)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:310,note:''},
+  {id:46,month:11,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:720,note:''},
+  {id:47,month:11,year:2026,dept:'ฝ่ายบริหารเชื้อเพลิง FU (ส่งเสริม)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:540,note:''},
+  {id:48,month:11,year:2026,dept:'แผนกสำนักงานและบริหารคุณภาพ (ISO)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:410,note:''},
+  {id:49,month:11,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:840,note:''},
+  {id:50,month:12,year:2026,dept:'ธุรกิจไฟฟ้า (MR)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:1100,note:'สิ้นปี'},
+  {id:51,month:12,year:2026,dept:'บัญชี (ACC)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:980,note:'สิ้นปี'},
+  {id:52,month:12,year:2026,dept:'แผนกสำนักงานและบริหารคุณภาพ (ADM)',item:'(ยอดรวม)',qty:1,unit:'ครั้ง',amount:650,note:'สิ้นปี'},
+];
+let nextDeptId = 53;
+let filterDept = 'ทั้งหมด';
+let filterDeptMonth = 0;
+
+function getDeptTotal(dept){return deptData.filter(d=>d.dept===dept).reduce((s,d)=>s+Number(d.amount),0);}
+function getDeptMonthTotal(dept,m,y){return deptData.filter(d=>d.dept===dept&&d.month===m&&d.year===y).reduce((s,d)=>s+Number(d.amount),0);}
+
+function renderDept(){
+  const allDepts = [...new Set(deptData.map(d=>d.dept))].sort();
+  const grandTotal = deptData.reduce((s,d)=>s+Number(d.amount),0);
+  const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+
+  // Filter data
+  let filtered = deptData;
+  if(filterDept!=='ทั้งหมด') filtered=filtered.filter(d=>d.dept===filterDept);
+  if(filterDeptMonth>0) filtered=filtered.filter(d=>d.month===filterDeptMonth);
+
+  // Group filtered by dept then month
+  const byDept={};
+  filtered.forEach(d=>{
+    if(!byDept[d.dept])byDept[d.dept]={dept:d.dept,items:[]};
+    byDept[d.dept].items.push(d);
+  });
+
+  // Dept summary cards
+  const deptTotals = DEPTS.map(dep=>({
+    dept:dep,
+    total:getDeptTotal(dep),
+    color:DEPT_COLORS[DEPTS.indexOf(dep)],
+    bg:DEPT_BG[DEPTS.indexOf(dep)]
+  })).sort((a,b)=>b.total-a.total);
+
+  const summaryCards = deptTotals.map(dt=>{
+    const pct = grandTotal>0?Math.round(dt.total/grandTotal*100):0;
+    return `<div class="sum-card" style="cursor:pointer;border-left:3px solid ${dt.color};" onclick="filterDept='${dt.dept}';render();">
+      <div class="sum-label" style="color:${dt.color};font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${dt.dept}</div>
+      <div class="sum-value" style="font-size:18px;color:${dt.color}">฿${fmt(dt.total)}</div>
+      <div class="sum-sub">${pct}% ของทั้งหมด</div>
+      <div class="sum-bar"><div class="sum-bar-fill" style="width:${pct}%;background:${dt.color};"></div></div>
+    </div>`;
+  }).join('');
+
+  // Monthly accumulate table per dept (cross-tab)
+  const crossRows = DEPTS.map(dep=>{
+    let running=0;
+    const cells = months.map(m=>{
+      const v=getDeptMonthTotal(dep,m,2026);
+      running+=v;
+      return {v,running};
+    });
+    const total=cells.reduce((s,c)=>s+c.v,0);
+    if(total===0)return '';
+    const col=DEPT_COLORS[DEPTS.indexOf(dep)];
+    return `<tr>
+      <td style="font-size:11px;font-weight:500;color:${col};white-space:nowrap;">${dep}</td>
+      ${cells.map(c=>`<td class="td-num" style="font-size:10px;">${c.v>0?'฿'+fmt(c.v):'—'}</td>`).join('')}
+      <td class="td-num" style="font-weight:600;color:${col}">฿${fmt(total)}</td>
+    </tr>`;
+  }).filter(Boolean).join('');
+
+  // Detail table — month level only (no item breakdown)
+  // Build month+dept aggregates from filtered data
+  const monthDeptMap={};
+  filtered.forEach(d=>{
+    const k=d.month+'-'+d.dept;
+    if(!monthDeptMap[k])monthDeptMap[k]={month:d.month,dept:d.dept,amount:0,ids:[]};
+    monthDeptMap[k].amount+=Number(d.amount);
+    monthDeptMap[k].ids.push(d.id);
+  });
+  // Group by dept
+  const byDept2={};
+  Object.values(monthDeptMap).forEach(r=>{
+    if(!byDept2[r.dept])byDept2[r.dept]={dept:r.dept,months:[]};
+    byDept2[r.dept].months.push(r);
+  });
+  const detailRows = Object.values(byDept2).sort((a,b)=>{
+    const ta=a.months.reduce((s,m)=>s+m.amount,0);
+    const tb=b.months.reduce((s,m)=>s+m.amount,0);
+    return tb-ta;
+  }).map(g=>{
+    const deptTotal=g.months.reduce((s,m)=>s+m.amount,0);
+    const col=DEPT_COLORS[DEPTS.indexOf(g.dept)]||'var(--blue)';
+    const monthRows=g.months.slice().sort((a,b)=>a.month-b.month).map(r=>{
+      return `<tr>
+        <td style="padding-left:20px;font-size:12px;color:var(--text2);">${MONTHS_FULL[r.month-1]} 2569</td>
+        <td class="td-num" style="color:${col};font-weight:600;">฿${fmt(r.amount)}</td>
+        <td><div class="td-actions">
+          <button class="btn btn-sm" onclick="openAddDeptMonth(${r.month},'${g.dept}')">แก้ไข</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDeptMonth(${r.month},'${g.dept}')">ลบ</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+    return `<tr style="background:var(--surface2)">
+      <td style="font-weight:600;font-size:12px;color:${col};border-left:3px solid ${col};padding-left:11px;">${g.dept}</td>
+      <td class="td-num" style="font-weight:700;color:${col}">฿${fmt(deptTotal)}</td>
+      <td></td>
+    </tr>${monthRows}`;
+  }).join('');
+
+  const filteredTotal=filtered.reduce((s,d)=>s+Number(d.amount),0);
+
+  return `
+  <div class="page-header">
+    <div>
+      <div class="page-title">การเบิกเครื่องเขียนตามหน่วยงาน</div>
+      <div class="page-sub">ปี 2569 · ${deptData.length} รายการ · รวมทั้งหมด ฿${fmt(grandTotal)}</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddDept()">+ เพิ่มรายการเบิก</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px;">
+    ${summaryCards}
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <div class="card-title">ยอดสะสมรายเดือนแยกหน่วยงาน (ม.ค.–ธ.ค. 2569)</div>
+    </div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th style="min-width:140px;">หน่วยงาน</th>
+        ${months.map(m=>`<th style="text-align:right;font-size:10px;">${MONTHS[m-1]}</th>`).join('')}
+        <th style="text-align:right;">รวม</th>
+      </tr></thead>
+      <tbody>${crossRows}</tbody>
+      <tfoot>
+        <tr style="background:var(--surface2)">
+          <td style="font-weight:600;font-size:11px;">รวมทุกหน่วยงาน</td>
+          ${months.map(m=>{
+            const v=deptData.filter(d=>d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+            return `<td class="td-num" style="font-size:10px;font-weight:600;">${v>0?'฿'+fmt(v):'—'}</td>`;
+          }).join('')}
+          <td class="td-num" style="font-weight:700;">฿${fmt(grandTotal)}</td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">รายละเอียดการเบิก</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select class="btn" style="cursor:pointer;font-size:11px;" onchange="filterDept=this.value;render()">
+          <option value="ทั้งหมด" ${filterDept==='ทั้งหมด'?'selected':''}>ทุกหน่วยงาน</option>
+          ${DEPTS.map(d=>`<option value="${d}" ${filterDept===d?'selected':''}>${d}</option>`).join('')}
+        </select>
+        <select class="btn" style="cursor:pointer;font-size:11px;" onchange="filterDeptMonth=parseInt(this.value);render()">
+          <option value="0" ${filterDeptMonth===0?'selected':''}>ทุกเดือน</option>
+          ${months.map(m=>`<option value="${m}" ${filterDeptMonth===m?'selected':''}>${MONTHS_FULL[m-1]}</option>`).join('')}
+        </select>
+        ${(filterDept!=='ทั้งหมด'||filterDeptMonth>0)?`<button class="btn btn-sm" onclick="filterDept='ทั้งหมด';filterDeptMonth=0;render()">ล้างตัวกรอง</button>`:''}
+      </div>
+    </div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>หน่วยงาน / เดือน</th>
+        <th style="text-align:right;">ยอดเบิก</th>
+        <th style="text-align:right;">จัดการ</th>
+      </tr></thead>
+      <tbody>${detailRows||'<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--text3);">ไม่พบข้อมูล</td></tr>'}</tbody>
+      <tfoot>
+        <tr style="background:var(--blue-light)">
+          <td style="font-weight:600;color:var(--blue)">ยอดรวม${filterDept!=='ทั้งหมด'?' ('+filterDept+')':''}</td>
+          <td class="td-num" style="font-weight:700;color:var(--blue)">฿${fmt(filteredTotal)}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+
+function openAddDept(){
+  editingId=null; editingType='dept';
+  document.getElementById('modal-title').textContent='เพิ่มรายการเบิกเครื่องเขียน';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="2569">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หน่วยงาน</label>
+      <select class="form-input" id="f-dept">
+        ${DEPTS.map(d=>`<option value="${d}">${d}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายการ</label>
+      <input class="form-input" id="f-item" placeholder="เช่น กระดาษ A4 (5 รีม)">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">จำนวน</label>
+        <input class="form-input" id="f-qty" type="number" placeholder="0" value="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">หน่วย</label>
+        <input class="form-input" id="f-unit" placeholder="เช่น รีม, ด้าม, เล่ม" value="ชิ้น">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนเงิน (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" placeholder="(ไม่บังคับ)">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openEditDept(id){
+  const d=deptData.find(x=>x.id===id);
+  editingId=id; editingType='dept';
+  document.getElementById('modal-title').textContent='แก้ไขรายการเบิกเครื่องเขียน';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">เดือน</label>
+        <select class="form-input" id="f-month">
+          ${MONTHS_FULL.map((m,i)=>`<option value="${i+1}" ${d.month===i+1?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ปี (พ.ศ.)</label>
+        <input class="form-input" id="f-year" type="number" value="${d.year+543}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หน่วยงาน</label>
+      <select class="form-input" id="f-dept">
+        ${DEPTS.map(dep=>`<option value="${dep}" ${d.dept===dep?'selected':''}>${dep}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายการ</label>
+      <input class="form-input" id="f-item" value="${d.item}">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">จำนวน</label>
+        <input class="form-input" id="f-qty" type="number" value="${d.qty}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">หน่วย</label>
+        <input class="form-input" id="f-unit" value="${d.unit}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนเงิน (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="${d.amount}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" value="${d.note}">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function deleteDept(id){
+  if(!confirm('ต้องการลบรายการนี้?'))return;
+  deptData=deptData.filter(d=>d.id!==id);
+  render();
+  showToast('ลบรายการเรียบร้อย');
+}
+
+function openAddDeptMonth(month,dept){
+  // Edit mode: show a simple amount editor for this month+dept aggregate
+  editingId='month-edit';
+  editingType='dept-month';
+  window._editMonth=month;
+  window._editDept=dept;
+  const cur=deptData.filter(d=>d.month===month&&d.dept===dept&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+  document.getElementById('modal-title').textContent='แก้ไขยอดเบิก — '+dept;
+  document.getElementById('modal-body').innerHTML=`
+    <div class="form-group">
+      <label class="form-label">หน่วยงาน</label>
+      <input class="form-input" value="${dept}" disabled style="background:var(--surface2);">
+    </div>
+    <div class="form-group">
+      <label class="form-label">เดือน</label>
+      <input class="form-input" value="${MONTHS_FULL[month-1]} 2569" disabled style="background:var(--surface2);">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ยอดเบิกรวม (บาท)</label>
+      <input class="form-input" id="f-amount" type="number" value="${cur}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" id="f-note" placeholder="(ไม่บังคับ)">
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function deleteDeptMonth(month,dept){
+  if(!confirm('ต้องการลบข้อมูลเดือน '+MONTHS_FULL[month-1]+' ของ '+dept+'?'))return;
+  deptData=deptData.filter(d=>!(d.month===month&&d.dept===dept&&d.year===2026));
+  render();
+  showToast('ลบรายการเรียบร้อย');
+}
+
+// ===== Monthly Bar Chart =====
+let _monthlyChartInstance = null;
+function initMonthlyChart(){
+  const canvas = document.getElementById('monthlyChart');
+  if(!canvas) return;
+  if(_monthlyChartInstance){ _monthlyChartInstance.destroy(); _monthlyChartInstance=null; }
+  const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+  const statVals = months.map(m=>getMonthlyStatTotal(m,2026));
+  const copierVals = months.map(m=>getMonthlyCopierTotal(m,2026));
+  const labels = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  _monthlyChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'ค่าใช้จ่ายใน OFM (Officemate)',
+          data: statVals,
+          backgroundColor: '#185FA5',
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'ถ่ายเอกสาร',
+          data: copierVals,
+          backgroundColor: '#0F6E56',
+          borderRadius: 4,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.dataset.label + ': ฿' + ctx.parsed.y.toLocaleString('th-TH')
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: false,
+          grid: { display: false },
+          ticks: { font: { size: 11 }, color: '#888780' },
+          border: { display: false }
+        },
+        y: {
+          stacked: false,
+          grid: { color: '#E2DDD4', lineWidth: 0.5 },
+          ticks: {
+            font: { size: 10 },
+            color: '#888780',
+            callback: v => v===0?'0':'฿'+v.toLocaleString('th-TH')
+          },
+          border: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ===== Inline Edit Config =====
+function editCfg(el, key){
+  const cur = CFG[key];
+  const inp = document.createElement('input');
+  inp.value = cur;
+  inp.style.cssText = 'font:inherit;border:none;border-bottom:2px solid var(--blue);outline:none;background:transparent;width:'+(Math.max(cur.length,8)*13)+'px;color:inherit;font-weight:inherit;font-size:inherit;';
+  el.innerHTML = '';
+  el.appendChild(inp);
+  inp.focus(); inp.select();
+  function save(){
+    const val = inp.value.trim() || cur;
+    CFG[key] = val;
+    render();
+    showToast('อัปเดต "'+val+'" เรียบร้อย');
+  }
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') save(); if(e.key==='Escape'){ CFG[key]=cur; render(); }});
+  inp.addEventListener('blur', save);
+}
+
+function editBudgetAmt(el){
+  const cur = CFG.budgetAmt;
+  const inp = document.createElement('input');
+  inp.type = 'number';
+  inp.value = cur;
+  inp.style.cssText = 'font:inherit;border:none;border-bottom:2px solid var(--blue);outline:none;background:transparent;width:140px;color:inherit;font-weight:inherit;font-size:inherit;';
+  el.innerHTML = '';
+  el.appendChild(inp);
+  inp.focus(); inp.select();
+  function save(){
+    const val = parseFloat(inp.value)||cur;
+    CFG.budgetAmt = val;
+    render();
+    showToast('อัปเดตงบประมาณ ฿'+fmt(val)+' เรียบร้อย');
+  }
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') save(); if(e.key==='Escape'){ CFG.budgetAmt=cur; render(); }});
+  inp.addEventListener('blur', save);
+}
+
+// ===== Export Excel =====
+function exportExcel(){
+  const wb = XLSX.utils.book_new();
+  const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+
+  // ---- Sheet 1: ภาพรวมรายเดือน ----
+  const s1 = [['เดือน','ค่าใช้จ่ายใน OFM (Officemate) (บาท)','ค่าถ่ายเอกสาร (บาท)','รวม (บาท)']];
+  let cumS=0, cumC=0;
+  months.forEach(m=>{
+    const sv=getMonthlyStatTotal(m,2026);
+    const cv=getMonthlyCopierTotal(m,2026);
+    cumS+=sv; cumC+=cv;
+    s1.push([MONTHS_FULL[m-1]+' 2569', sv, cv, sv+cv]);
+  });
+  s1.push(['รวมทั้งปี', totalStat(), totalCopier(), totalStat()+totalCopier()]);
+  const ws1 = XLSX.utils.aoa_to_sheet(s1);
+  ws1['!cols']=[{wch:20},{wch:28},{wch:22},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'ภาพรวมรายเดือน');
+
+  // ---- Sheet 2: ค่าเครื่องเขียน ----
+  const s2 = [['เดือน','ปี (พ.ศ.)','ยอดเบิก (บาท)','ยอดสะสม (บาท)']];
+  const statGrouped={};
+  statData.forEach(d=>{
+    const k=d.year+'-'+d.month;
+    if(!statGrouped[k])statGrouped[k]={month:d.month,year:d.year,total:0};
+    statGrouped[k].total+=Number(d.amount);
+  });
+  let runStat=0;
+  Object.values(statGrouped).sort((a,b)=>a.month-b.month).forEach(g=>{
+    runStat+=g.total;
+    s2.push([MONTHS_FULL[g.month-1], g.year+543, g.total, runStat]);
+  });
+  s2.push(['รวม','',totalStat(),'']);
+  const ws2 = XLSX.utils.aoa_to_sheet(s2);
+  ws2['!cols']=[{wch:16},{wch:10},{wch:20},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'ค่าเครื่องเขียน');
+
+  // ---- Sheet 3: ค่าถ่ายเอกสาร ----
+  const copierNames=['หมายเลข 9135R810748 (อาคารสำนักงาน)','หมายเลข 9135R810593 (ห้องควบคุม 21)','หมายเลข 9135R810606 (อาคารปฏิบัติการ)'];
+  const s3 = [['เดือน','เครื่อง','จำนวนแผ่น','จำนวนเงิน (บาท)']];
+  const copierGrouped={};
+  copierData.forEach(d=>{
+    const k=d.month+'-'+d.copier;
+    if(!copierGrouped[k])copierGrouped[k]={month:d.month,copier:d.copier,pages:0,amount:0};
+    const pgs = (d.colorPages!=null||d.bwPages!=null) ? (Number(d.colorPages||0)+Number(d.bwPages||0)) : Number(d.pages||0);
+    const amt = (d.colorPages!=null||d.bwPages!=null) ? calcCopierAmt(d.colorPages||0,d.bwPages||0) : Number(d.amount||0);
+    copierGrouped[k].pages+=pgs;
+    copierGrouped[k].amount+=amt;
+  });
+  Object.values(copierGrouped).sort((a,b)=>a.month-b.month||copierNames.indexOf(a.copier)-copierNames.indexOf(b.copier)).forEach(g=>{
+    s3.push([MONTHS_FULL[g.month-1]+' 2569', g.copier, g.pages, g.amount]);
+  });
+  s3.push(['รวม','',
+    copierData.reduce((s,d)=>s+((d.colorPages!=null||d.bwPages!=null)?Number(d.colorPages||0)+Number(d.bwPages||0):Number(d.pages||0)),0),
+    totalCopier()
+  ]);
+  const ws3 = XLSX.utils.aoa_to_sheet(s3);
+  ws3['!cols']=[{wch:20},{wch:34},{wch:14},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'ค่าถ่ายเอกสาร');
+
+  // ---- Sheet 4: การเบิกตามหน่วยงาน (cross-tab) ----
+  const hdr4 = ['หน่วยงาน'].concat(months.map(m=>MONTHS_FULL[m-1])).concat(['รวม']);
+  const s4 = [hdr4];
+  DEPTS.forEach(dep=>{
+    const row=[dep];
+    let total=0;
+    months.forEach(m=>{
+      const v=deptData.filter(d=>d.dept===dep&&d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+      row.push(v||'');
+      total+=v;
+    });
+    row.push(total||'');
+    if(total>0) s4.push(row);
+  });
+  // Footer row
+  const footRow=['รวมทุกหน่วยงาน'];
+  let grandTotal=0;
+  months.forEach(m=>{
+    const v=deptData.filter(d=>d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+    footRow.push(v||'');
+    grandTotal+=v;
+  });
+  footRow.push(grandTotal);
+  s4.push(footRow);
+  const ws4 = XLSX.utils.aoa_to_sheet(s4);
+  ws4['!cols']=[{wch:36}].concat(months.map(()=>({wch:12}))).concat([{wch:14}]);
+  XLSX.utils.book_append_sheet(wb, ws4, 'เบิกตามหน่วยงาน');
+
+  // ---- Sheet 5: สะสมรายเดือนต่อหน่วยงาน ----
+  const s5 = [['หน่วยงาน','เดือน','ยอดเบิก (บาท)','ยอดสะสม (บาท)']];
+  DEPTS.forEach(dep=>{
+    let running=0;
+    months.forEach(m=>{
+      const v=deptData.filter(d=>d.dept===dep&&d.month===m&&d.year===2026).reduce((s,d)=>s+Number(d.amount),0);
+      if(v>0){
+        running+=v;
+        s5.push([dep, MONTHS_FULL[m-1]+' 2569', v, running]);
+      }
+    });
+  });
+  const ws5 = XLSX.utils.aoa_to_sheet(s5);
+  ws5['!cols']=[{wch:36},{wch:18},{wch:18},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, ws5, 'สะสมตามหน่วยงาน');
+
+  // Save file
+  const dateStr = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-');
+  XLSX.writeFile(wb, 'งบเครื่องเขียน_' + dateStr + '.xlsx');
+  showToast('Export Excel เรียบร้อย — 5 sheet');
+}
+
+// ===== Export / Import JSON =====
+function saveJSON(){
+  const data = {
+    version: 1,
+    savedAt: new Date().toLocaleString('th-TH'),
+    statData,
+    copierData,
+    deptData,
+    nextStatId,
+    nextCopierID,
+    nextDeptId
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-');
+  a.href = url;
+  a.download = 'งบเครื่องเขียน_' + dateStr + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('บันทึกข้อมูลเรียบร้อย (' + data.savedAt + ')');
+}
+
+function loadJSON(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!data.statData || !data.copierData || !data.deptData){
+        alert('ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ที่ export จากระบบนี้เท่านั้น');
+        return;
+      }
+      if(!confirm('โหลดข้อมูลจากไฟล์ "' + file.name + '" ?\nข้อมูลปัจจุบันในหน้าจอจะถูกแทนที่')) return;
+      statData = data.statData;
+      copierData = data.copierData;
+      deptData = data.deptData;
+      nextStatId = data.nextStatId || 999;
+      nextCopierID = data.nextCopierID || 999;
+      nextDeptId = data.nextDeptId || 999;
+      render();
+      showToast('โหลดข้อมูลสำเร็จ — บันทึกเมื่อ ' + (data.savedAt || 'ไม่ทราบ'));
+    } catch(err){
+      alert('เกิดข้อผิดพลาด: ไม่สามารถอ่านไฟล์ได้\n' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+render();
+</script>
+</body>
+</html>
